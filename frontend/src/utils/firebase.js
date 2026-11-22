@@ -1,8 +1,8 @@
-import { initializeApp } from "firebase/app";
-import { browserLocalPersistence, getAuth, GoogleAuthProvider, setPersistence } from "firebase/auth";
 
+import { initializeApp } from "firebase/app";
+import {getAuth, GoogleAuthProvider} from "firebase/auth"
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: import.meta.env.VITE_FIREBASE_APIKEY,
   authDomain: "ai-interviewer-1de7d.firebaseapp.com",
   projectId: "ai-interviewer-1de7d",
   storageBucket: "ai-interviewer-1de7d.firebasestorage.app",
@@ -11,11 +11,11 @@ const firebaseConfig = {
   measurementId: "G-7R3RRMDM6R"
 };
 
-// Initialize Firebase
+
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app)
-const provider = new GoogleAuthProvider()
-const authPersistence = setPersistence(auth, browserLocalPersistence)
 
-export { auth, authPersistence, provider }
+const provider = new GoogleAuthProvider()
+
+export {auth , provider}

@@ -1,68 +1,103 @@
-import { Navigate, Route } from "react-router-dom"
-import { Routes } from "react-router-dom"
-import Home from "./pages/Home"
-import Dashboard from "./pages/Dashboard"
-import { useState, useEffect } from "react"
-import { getCurrentUser } from "./apis/user.api"
-import api from "./utils/axios"
-import { getRedirectResult, onAuthStateChanged } from "firebase/auth"
-import { auth, authPersistence } from "./utils/firebase"
+import React from 'react'
+import { Routes , Route, Navigate } from 'react-router-dom'
+import Home from './pages/Home'
+import Dashboard from './pages/Dashboard'
+import { use } from 'react'
+import { useState } from 'react'
+import { useEffect } from 'react'
+import { getCurrentUser } from './apis/user.api'
+import Scorer from './pages/Scorer'
+import { getResume } from './apis/resume.api'
+import { useDispatch } from 'react-redux'
+import { setResume } from './redux/resumeSlice'
+import ResumeBuilder from './pages/ResumeBuilder'
+import InterviewStart from './pages/InterviewStart'
+import InterviewPage from './pages/InterviewPage'
+import InterviewReport from './pages/InterviewReport'
+import Roadmap from './pages/Roadmap'
+import Billing from './pages/Billing'
 
 function App() {
+  const [user,setUser]= useState(null)
+  const [loading , setLoading] = useState(true)
+  const dispatch = useDispatch()
 
-  const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState(null)
 
   useEffect(()=>{
-    const completeRedirect = async () => {
-      try {
-        await authPersistence
-        await getRedirectResult(auth)
-      } catch (error) {
-        console.error("[auth] Redirect result failed:", error)
-      }
+
+    const getUser = async () => {
+      const data = await getCurrentUser()
+      setUser(data?.user)
+      setLoading(false)
     }
 
-    completeRedirect()
+    getUser()
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (!firebaseUser) {
-        setLoading(false)
-        return
-      }
+  },[])
 
-      try {
-        const token = await firebaseUser.getIdToken()
-        const loginResponse = await api.post("/api/auth/login", { token })
-        setUser(loginResponse.data?.user ?? null)
-        const currentUserResponse = await getCurrentUser()
-        setUser(currentUserResponse?.user ?? loginResponse.data?.user ?? null)
-      } catch (error) {
-        console.error("[auth] Sign-in flow failed:", {
-          status: error.response?.status,
-          message: error.response?.data?.message || error.message,
-        })
-        setUser(null)
-      } finally {
-        setLoading(false)
-      }
+  useEffect(()=>{
 
-    })
+    const getResumeData = async()=>{
+      const result = await getResume()
+      dispatch(setResume(result?.data))
+    }
 
-    return unsubscribe
-  }, [])
+    getResumeData()
+
+  },[])
+
 
   if(loading){
-    return <div>Loading...</div>
+    return(
+      <div className="fixed top-0 left-0 w-full z-[9999]">
+        <div className="h-1 bg-black animate-pulse w-full" />
+      </div>
+    )
   }
 
   return (
-    <>
-      <Routes>
-        <Route path="/" element={ user ? <Navigate to="/dashboard" replace/> : <Home user = {user} setUser={setUser} /> } />
-        <Route path="/dashboard" element={ user ? <Dashboard user = {user} setUser = {setUser}/> : <Navigate to="/" replace/> } />
-      </Routes>
-    </>
+   <>
+
+   <Routes>
+    <Route path='/' element={
+      user ? <Navigate to="/dashboard" replace/> : <Home setUser={setUser}/>
+      }/>
+
+    <Route path='/dashboard' element={
+      user ? <Dashboard user={user} setUser={setUser}/> 
+      : <Navigate to="/" replace/> }/>
+
+      <Route path='/scorer' element={
+      user ? <Scorer user={user} setUser={setUser}/> 
+      : <Navigate to="/" replace/> }/>
+
+      <Route path='/resume' element={
+      user ? <ResumeBuilder user={user} setUser={setUser}/> 
+      : <Navigate to="/" replace/> }/>
+
+      <Route path='/interview' element={
+      user ? <InterviewStart user={user} setUser={setUser}/> 
+      : <Navigate to="/" replace/> }/>
+
+      <Route path='/interview/:id' element={
+      user ? <InterviewPage user={user} setUser={setUser}/> 
+      : <Navigate to="/" replace/> }/>
+
+      <Route path='/interview/:id/report' element={
+      user ? <InterviewReport user={user} setUser={setUser}/> 
+      : <Navigate to="/" replace/> }/>
+
+      <Route path='/roadmap' element={
+      user ? <Roadmap user={user} setUser={setUser}/> 
+      : <Navigate to="/" replace/> }/>
+
+      <Route path='/billing' element={
+      user ? <Billing user={user} setUser={setUser}/> 
+      : <Navigate to="/" replace/> }/>
+
+
+   </Routes>
+   </>
   )
 }
 

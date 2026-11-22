@@ -5,14 +5,19 @@ export const getCurrentUser = async () => {
         const response = await api.get("/api/me")
         return response.data
     } catch (error) {
-        if (error.response?.status === 401) {
-            return { user: null }
-        }
-
-        throw error
+        
+        return null
     }
 }
 
-export const logoutUser = async () => {
-    await api.post("/api/auth/logout")
+export const useCoins = async (data)=>{
+    try {
+        const response = await api.post("/api/auth/use-coins" , data)
+        console.log(response.data)
+        return response.data
+    } catch (error) {
+        console.log(error)
+        
+        throw error;
+    }
 }

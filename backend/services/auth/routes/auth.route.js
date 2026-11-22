@@ -1,12 +1,20 @@
 import express from "express";
-import { GoogleAuth } from "../controllers/auth.controller.js";
-import { logout } from "../controllers/auth.controller.js";
+import {addCoins, login, logout, useInterviewCoins } from "../controllers/auth.controller.js";
+
+
+
 
 const authRouter = express.Router();
 
-authRouter.post("/login", GoogleAuth);
-authRouter.post("/logout", logout);
+authRouter.post("/login",login);
+
+authRouter.get("/logout",logout)
+
+authRouter.post("/add-coins",addCoins)
+
+authRouter.post(
+  "/use-coins",
+  useInterviewCoins
+);
 
 export default authRouter;
-
-//.../api/v01/auth/login

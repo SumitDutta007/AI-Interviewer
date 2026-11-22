@@ -1,61 +1,83 @@
-import { useEffect, useState } from 'react'
-import { motion } from 'motion/react'
-import { FiShield, FiX } from 'react-icons/fi'
-import { FcGoogle } from 'react-icons/fc'
-import { auth, authPersistence, provider } from '../utils/firebase'
-import { signInWithPopup, signInWithRedirect } from 'firebase/auth'
+import React from 'react'
+import { FiX } from "react-icons/fi";
+import { motion } from "motion/react"
+import { FcGoogle } from "react-icons/fc";
+import { signInWithPopup } from 'firebase/auth';
+import { auth, provider } from '../utils/firebase';
+import api from '../utils/axios';
+function LoginModel({ onClose ,setUser}) {
 
-const LoginModel = ({ onClose, setUser }) => {
-  const [isSigningIn, setIsSigningIn] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+    const handleGoogleAuth = async () => {
+        try {
+            const result = await signInWithPopup(auth , provider)
+            const token = await result.user.getIdToken()
 
-  useEffect(() => {
-    const handleKeyDown = (event) => event.key === 'Escape' && onClose()
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onClose])
-
-const handleGoogleAuth = async () => {
-  setIsSigningIn(true)
-  setErrorMessage('')
-
-  try {
-    await authPersistence
-
-    const result = await signInWithPopup(auth, provider)
-    const token = await result.user.getIdToken()
-    const response = await api.post('/api/auth/login', { token })
-    setUser(response?.data?.user ?? null)
-    onClose()
-  }
-  catch (error){
-    if (error.code === 'auth/popup-blocked') {
-      await signInWithRedirect(auth, provider)
-      return
+            const response = await api.post("/api/auth/login" , {token})
+          
+            setUser(response?.data?.user)
+            onClose()
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    console.error('[auth] Google sign-in failed:', error.code || error.message)
-    setErrorMessage(error.response?.data?.message || error.message || 'Google sign-in failed')
-    setIsSigningIn(false)
-  }
-}
 
-  return (
-    <motion.div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <motion.section className="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title" initial={{ opacity: 0, y: 18, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.98 }} transition={{ duration: 0.28 }}>
-        <button className="modal-close" onClick={onClose} aria-label="Close login"><FiX /></button>
-        <div className="modal-intro"><span className="modal-kicker">Welcome back</span><h2 id="login-title">Secure sign in<br /><em>with Google.</em></h2><p>Continue to your interview dashboard and practice history in one click.</p></div>
-        <div className="login-actions">
-        <button className="google-button" type="button" onClick={handleGoogleAuth} disabled={isSigningIn}>
-          <FcGoogle /> {isSigningIn ? 'Connecting to Google...' : 'Continue with Google'}
-        </button>
+    return (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md px-4'>
+            <div className='relative w-full max-w-sm
+        bg-[#0A0A0A]/80 backdrop-blur-2xl
+        border border-white/10
+        rounded-2xl
+        overflow-hidden
+        shadow-[0_8px_32px_rgba(0,0,0,0.25)]'>
+
+                <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none' />
+
+                <div className='relative p-7'>
+                    <button
+                        onClick={onClose}
+                        className='absolute top-4 right-4
+              text-white/30 hover:text-white
+              transition-colors'><FiX size={16} /></button>
+
+                    <h2 className='text-lg font-bold text-center mb-2 text-white'>
+                        Sign In to {" "}
+                        <span className='font-extrabold text-lg tracking-tight text-white'>FresherAI</span>
+                    </h2>
+                    <p className='text-white/45 text-center text-xs'>
+                        Continue your AI interview journey
+                    </p>
+
+                    <div className='mt-7'>
+                        <motion.button
+                        onClick={handleGoogleAuth}
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.97 }}
+                            className='w-full flex items-center justify-center gap-3 py-3 rounded-xl border border-white/15 bg-white/10 backdrop-blur-md hover:border-white/25 hover:bg-white/[0.14] shadow-inner transition-all'
+                        >
+                            <FcGoogle size={18}/>
+                            <span className='text-white font-medium text-sm'>
+                                Continue with Google
+                            </span>
+
+
+                        </motion.button>
+                    </div>
+                </div>
+
+                <div className='relative border-t border-white/10 bg-black/30 p-4 text-center'>
+                <p className='text-white/30 text-xs'>
+                Secure authentication powered by Firebase
+                </p>
+                </div>
+
+
+
+
+            </div>
+
         </div>
-        {errorMessage && <p className="modal-error" role="alert">{errorMessage}</p>}
-        <p className="modal-security"><FiShield /> Your data is encrypted and never sold.</p>
-        <p className="modal-legal">By continuing, you agree to Voxen's terms and privacy policy.</p>
-      </motion.section>
-    </motion.div>
-  )
+    )
 }
 
 export default LoginModel
