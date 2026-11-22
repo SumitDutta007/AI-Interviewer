@@ -5,7 +5,7 @@ import { getAuth } from "firebase-admin/auth";
 
 import { app } from "../configs/firebase.js";
 import User from "../model/user.model.js";
-import  redis from "../../../shared/redis/redis.js";
+import redis from "../configs/redis.js";
 
 
 export const login = async (req, res) => {
