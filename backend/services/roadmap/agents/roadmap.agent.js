@@ -32,10 +32,14 @@ ${JSON.stringify(resume, null, 2)}
 `)
         ]);
 
-        const roadmap = JSON.parse(response.content
-            .replace(/```json/g, "")
-            .replace(/```/g, "")
-            .trim())
+        const content = typeof response.content === "string"
+            ? response.content
+            : JSON.stringify(response.content)
+        const jsonText = content
+            .replace(/^```(?:json)?\s*/i, "")
+            .replace(/\s*```$/, "")
+            .trim()
+        const roadmap = JSON.parse(jsonText)
 
              const capitalize = (value = "") =>
       value.charAt(0).toUpperCase() +

@@ -105,14 +105,27 @@ function Scorer({ user, setUser }) {
 
             const response = await api.post("/api/resume/upload", formData)
 
-            dispatch(setResume(response?.data?.data))
+            const resumeData = response?.data?.data
+            if (!resumeData) {
+                throw new Error("The resume analysis did not return any data.")
+            }
+
+            dispatch(setResume(resumeData))
             setLoading(false)
-
-
-
         } catch (error) {
             console.log(error)
-            alert("Upload failed")
+            try {
+                const existingResume = await api.get("/api/resume/get-resume")
+                if (existingResume?.data?.data) {
+                    dispatch(setResume(existingResume.data.data))
+                    return
+                }
+            } catch (resumeError) {
+                console.log(resumeError)
+            }
+
+            const message = error.response?.data?.message || error.message || "Upload failed"
+            alert(message)
             setLoading(false)
         }
     }

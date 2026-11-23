@@ -37,11 +37,13 @@ function Dashboard({ user, setUser }) {
 
     const fetchInterviews = async () => {
       const response = await getAllInterviews()
+      if (!response?.stats) return
+
       setStats(response.stats)
-      setTechnicalData(response.technicalData)
-      setHrData(response.hrData)
-      setTechnicalCount(response.technicalCount)
-      setHrCount(response.hrCount)
+      setTechnicalData(response.technicalData || [])
+      setHrData(response.hrData || [])
+      setTechnicalCount(response.technicalCount || 0)
+      setHrCount(response.hrCount || 0)
     }
 
     fetchInterviews()

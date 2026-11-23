@@ -32,7 +32,12 @@ export const uploadResume = async (req,res) => {
 
         const aiResponse = await resumeAgent(resumeText)
 
-        const resumeData = JSON.parse(aiResponse)
+        const jsonText = typeof aiResponse === "string"
+            ? aiResponse
+                .replace(/^```(?:json)?\s*/i, "")
+                .replace(/\s*```$/, "")
+            : JSON.stringify(aiResponse)
+        const resumeData = JSON.parse(jsonText)
 
         let resume = await Resume.findOne({userId})
 
@@ -66,8 +71,14 @@ export const uploadResume = async (req,res) => {
     } catch (error) {
         console.log(error)
 
-        if(file){
-            await fs.unlinkSync(file.path);
+        if(file?.path){
+            try {
+                await fs.promises.unlink(file.path)
+            } catch (cleanupError) {
+                if (cleanupError.code !== "ENOENT") {
+                    console.log(cleanupError)
+                }
+            }
         }
         return res.status(500).json({
             success:false,
