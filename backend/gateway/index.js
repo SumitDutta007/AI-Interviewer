@@ -73,7 +73,9 @@ const billingServiceUrl = getServiceUrl(
 app.use("/api/auth" , proxy(authServiceUrl, {
     timeout: 300000
 }))
-app.use("/api/resume" ,isAuth, proxyWithHeaders(resumeServiceUrl))
+app.use("/api/resume" ,isAuth, proxyWithHeaders(resumeServiceUrl, {
+    parseReqBody: false
+}))
 app.use("/api/interview",isAuth ,proxyWithHeaders(interviewServiceUrl))
 app.use("/api/roadmap",isAuth ,proxyWithHeaders(roadmapServiceUrl))
 app.use("/api/billing",isAuth ,proxyWithHeaders(billingServiceUrl))

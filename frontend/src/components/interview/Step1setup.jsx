@@ -71,7 +71,12 @@ function Step1setup({ user, setUser }) {
                 console.log(resumeError)
             }
 
-            alert(error.response?.data?.message || error.message || "Upload failed")
+            const errorMessage = error.response?.status === 502
+                ? "The resume service was unavailable. Wait a few seconds and try again."
+                : error.response?.status === 504
+                    ? "Resume processing timed out. Try again with a smaller PDF."
+                    : error.response?.data?.message || error.message || "Upload failed"
+            alert(errorMessage)
             setUploading(false)
         }
     }
