@@ -82,9 +82,13 @@ function Step1setup({ user, setUser }) {
             return
         }
         setStarting(true)
-        const response = await startInterview({ role, type, useResume, resume })
+        try {
+            const response = await startInterview({ role: role.trim(), type, useResume: useResume && Boolean(resume), resume })
 
-        if(response?.interviewId){
+            if (!response?.interviewId) {
+                throw new Error(response?.message || "Failed to start interview.")
+            }
+
             try {
                 
             const coinResponse = await useCoins({ coins: 50, action: "start-interview" })
@@ -93,19 +97,15 @@ function Step1setup({ user, setUser }) {
                 ...prev, interviewCoin: coinResponse?.interviewCoin,
             }))
             } catch (error) {
-                setStarting(false)
-                alert("Failed to use coins.")
-                return;
+                console.log("Interview created, but coin deduction failed:", error)
             }
 
 
-        }
-
-        setStarting(false)
-        if (response?.interviewId) {
+            setStarting(false)
             navigate(`/interview/${response.interviewId}`)
-        } else {
-            alert(response?.message || "Failed to start interview.")
+        } catch (error) {
+            setStarting(false)
+            alert(error.response?.data?.message || error.message || "Failed to start interview.")
         }
 
     }

@@ -31,6 +31,12 @@ function Roadmap({ user, setUser }) {
         getAllRoadmaps()
     }, [])
 
+    useEffect(() => {
+        if (!resume) {
+            setUseResume(false)
+        }
+    }, [resume])
+
     const getAllRoadmaps = async () => {
             setHistoryLoading(true)
             try {
@@ -61,17 +67,6 @@ function Roadmap({ user, setUser }) {
         setLoading(true);
         setError("");
         try {
-            try {
-                const coinResponse = await useCoins({ coins: 20, action: "roadmap-builder" })
-                setUser((prev) => ({
-                    ...prev, interviewCoin: coinResponse?.interviewCoin,
-                }))
-            } catch (error) {
-                setLoading(false)
-                alert("Failed to use coins.")
-                return;
-            }
-
             const response = await api.post("/api/roadmap/generate", {
                 role: role.trim(),
                 targetPackage,
@@ -79,7 +74,17 @@ function Roadmap({ user, setUser }) {
                 resume
             })
             setRoadmap(response.data.data)
-getAllRoadmaps()
+
+            try {
+                const coinResponse = await useCoins({ coins: 20, action: "roadmap-builder" })
+                setUser((prev) => ({
+                    ...prev, interviewCoin: coinResponse?.interviewCoin,
+                }))
+            } catch (coinError) {
+                console.log("Roadmap generated, but coin deduction failed:", coinError)
+            }
+
+            getAllRoadmaps()
             setLoading(false)
 
         } catch (error) {
@@ -234,11 +239,15 @@ getAllRoadmaps()
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
                             type='button'
-                            onClick={() => setUseResume(!useResume)}
+                            disabled={!resume || loading}
+                            title={resume ? "Personalize roadmap with your uploaded resume" : "Upload a resume first"}
+                            onClick={() => {
+                                if (resume) setUseResume(!useResume)
+                            }}
                             className={`flex items-center text-xs gap-1 px-2 py-2 rounded-xl ${useResume
                                 ? "bg-emerald-500/10 text-emerald-400"
                                 : "bg-white/5 text-white/60"
-                                }`}>
+                                } disabled:opacity-40 disabled:cursor-not-allowed`}>
                             {useResume ? (
                                 <>
                                     <FiCheck size={12} />

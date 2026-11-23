@@ -11,13 +11,23 @@ import { proxyWithHeaders } from "./utils/proxyWithHeaders.js"
 const app = express()
 app.use(express.json())
 
-const isRender = Boolean(process.env.RENDER)
-const frontendUrl = isRender
-    ? "https://ai-interviewer-virid-xi.vercel.app"
-    : (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "")
+const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "")
 
 app.use(cors({
-    origin: frontendUrl,
+    origin: (origin, callback) => {
+        const allowedOrigins = new Set([
+            frontendUrl,
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "https://ai-interviewer-virid-xi.vercel.app"
+        ])
+
+        if (!origin || allowedOrigins.has(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error("Origin not allowed"))
+        }
+    },
     credentials:true
 }))
 
@@ -32,21 +42,11 @@ app.get("/" , (req,res)=>{
 
 
 const configuredAuthServiceUrl = process.env.AUTH_SERVICE_URL
-const authServiceUrl =
-    isRender && (!configuredAuthServiceUrl ||
-        configuredAuthServiceUrl.includes("localhost") ||
-        configuredAuthServiceUrl.includes("127.0.0.1"))
-        ? "https://auth-service-1vp7.onrender.com"
-        : (configuredAuthServiceUrl || "http://localhost:8001")
+const authServiceUrl = configuredAuthServiceUrl || "http://localhost:8001"
 
 const getServiceUrl = (name, localUrl, renderUrl) => {
     const configuredUrl = process.env[name]
-    if (isRender && (!configuredUrl ||
-        configuredUrl.includes("localhost") ||
-        configuredUrl.includes("127.0.0.1"))) {
-        return renderUrl
-    }
-    return configuredUrl || localUrl
+    return configuredUrl || renderUrl || localUrl
 }
 
 const resumeServiceUrl = getServiceUrl(

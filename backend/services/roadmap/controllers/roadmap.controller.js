@@ -14,7 +14,7 @@ export const generateRoadmap =async (req,res)=> {
 
       const userId = req.headers["x-user-id"]
 
-      if(!role || !targetPackage){
+      if(!role?.trim() || !targetPackage){
         return res.status(400).json({
         success: false,
         message: "Role and Target Package are required.",

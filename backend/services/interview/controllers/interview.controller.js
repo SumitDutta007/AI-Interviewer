@@ -13,7 +13,7 @@ export const startInterview = async (req, res) => {
             useResume = false,
             resume = {}, } = req.body;
 
-        if (!type && !role) {
+        if (!type || !role?.trim()) {
             return res.status(400).json({
                 success: false,
                 message: "Interview type and role are required",
