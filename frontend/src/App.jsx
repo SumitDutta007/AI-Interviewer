@@ -42,9 +42,11 @@ function App() {
       dispatch(setResume(result?.data))
     }
 
-    getResumeData()
+    if (user) {
+      getResumeData()
+    }
 
-  },[])
+  },[user, dispatch])
 
 
   if(loading){

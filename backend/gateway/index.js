@@ -11,8 +11,13 @@ import { proxyWithHeaders } from "./utils/proxyWithHeaders.js"
 const app = express()
 app.use(express.json())
 
+const isRender = Boolean(process.env.RENDER)
+const frontendUrl = isRender
+    ? "https://ai-interviewer-virid-xi.vercel.app"
+    : (process.env.FRONTEND_URL || "http://localhost:5173")
+
 app.use(cors({
-    origin:process.env.FRONTEND_URL,
+    origin: frontendUrl,
     credentials:true
 }))
 
@@ -26,7 +31,15 @@ app.get("/" , (req,res)=>{
 })
 
 
-app.use("/api/auth" , proxy(process.env.AUTH_SERVICE_URL))
+const configuredAuthServiceUrl = process.env.AUTH_SERVICE_URL
+const authServiceUrl =
+    isRender && (!configuredAuthServiceUrl ||
+        configuredAuthServiceUrl.includes("localhost") ||
+        configuredAuthServiceUrl.includes("127.0.0.1"))
+        ? "https://auth-service-1vp7.onrender.com"
+        : (configuredAuthServiceUrl || "http://localhost:8001")
+
+app.use("/api/auth" , proxy(authServiceUrl))
 app.use("/api/resume" ,isAuth, proxyWithHeaders(process.env.RESUME_SERVICE_URL))
 app.use("/api/interview",isAuth ,proxyWithHeaders(process.env.INTERVIEW_SERVICE_URL))
 app.use("/api/roadmap",isAuth ,proxyWithHeaders(process.env.ROADMAP_SERVICE_URL))

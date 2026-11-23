@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FiX } from "react-icons/fi";
 import { motion } from "motion/react"
 import { FcGoogle } from "react-icons/fc";
@@ -6,8 +6,10 @@ import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../utils/firebase';
 import api from '../utils/axios';
 function LoginModel({ onClose ,setUser}) {
+    const [error, setError] = useState("")
 
     const handleGoogleAuth = async () => {
+        setError("")
         try {
             const result = await signInWithPopup(auth , provider)
             const token = await result.user.getIdToken()
@@ -18,6 +20,13 @@ function LoginModel({ onClose ,setUser}) {
             onClose()
         } catch (error) {
             console.log(error)
+            if (error.code === "auth/unauthorized-domain") {
+                setError("This website domain is not authorized in Firebase. Add it to Firebase Authentication authorized domains.")
+            } else if (error.code === "auth/popup-blocked" || error.code === "auth/popup-closed-by-user") {
+                setError("The Google sign-in window was blocked or closed. Allow popups and try again.")
+            } else {
+                setError(error.response?.data?.message || error.message || "Unable to sign in. Please try again.")
+            }
         }
     }
 
@@ -62,6 +71,11 @@ function LoginModel({ onClose ,setUser}) {
 
 
                         </motion.button>
+                        {error && (
+                            <p className='mt-3 text-center text-xs text-red-300' role='alert'>
+                                {error}
+                            </p>
+                        )}
                     </div>
                 </div>
 
