@@ -10,8 +10,9 @@ import fs from "fs"
 
 
 export const uploadResume = async (req,res) => {
+    let file
     try {
-        const file = req.file;
+        file = req.file;
         if(!file){
             return res.status(400).json({
                 success:false,
