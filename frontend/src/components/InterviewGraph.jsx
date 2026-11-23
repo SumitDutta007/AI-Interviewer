@@ -1,69 +1,40 @@
 import React from 'react'
-import { motion } from "motion/react";
-import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { motion } from 'motion/react'
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 function CustomTooltip({ active, payload }) {
-    if (active && payload?.length) {
-        return (
-            <div className='bg-[#0A0A0A]/95 backdrop-blur-xl border border-white/10 rounded-lg px-2.5 py-1.5 text-[11px] text-white shadow-2xl'>
-                <p className="text-white/40 mb-0.5">{payload[0]?.payload?.skill}</p>
-                <p className="font-bold text-white">{payload[0]?.value}%</p>
-
-            </div>
-        )
-    }
+  if (!active || !payload?.length) return null
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-[11px] shadow-lg">
+      <p className="mb-0.5 text-slate-400">{payload[0]?.payload?.skill}</p>
+      <p className="font-bold text-slate-900">{payload[0]?.value}%</p>
+    </div>
+  )
 }
+
 function RadarCard({ title, data, color, index }) {
-    return (
-
-        <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.2 + index * 0.1 }}
-            whileHover={{ y: -4 }}
-            className='relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-xl p-3 md:p-4
-                 flex flex-col shadow-[0_8px_32px_rgba(0,0,0,0.18)] hover:border-white/20 hover:shadow-[0_12px_40px_rgba(0,0,0,0.28)] transition-all'>
-            <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none' />
-
-            <div className='relative'>
-                <ResponsiveContainer width="100%" height={180}>
-                    <RadarChart data={data} cx="50%" cy="50%" outerRadius="68%">
-                        <PolarGrid stroke="rgba(255,255,255,0.08)" gridType="circle" />
-                        <PolarAngleAxis dataKey="skill"
-                            tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 9, fontWeight: 500 }} />
-                        <Radar
-                            name={title}
-                            dataKey="score"
-                            stroke={color}
-                            fill={color}
-                            fillOpacity={0.15}
-                            strokeWidth={2}
-                            dot={{ r: 2.5, fill: color, strokeWidth: 0 }} />
-                        <Tooltip content={<CustomTooltip/>}/>
-                    </RadarChart>
-                </ResponsiveContainer>
-                <p className='text-white font-semibold text-xs text-center mt-2'>
-                    {title}
-                </p>
-            </div>
-
-        </motion.div>
-
-    )
+  return (
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }} className="surface-card p-4">
+      <ResponsiveContainer width="100%" height={180}>
+        <RadarChart data={data} cx="50%" cy="50%" outerRadius="68%">
+          <PolarGrid stroke="#e7eaf0" gridType="circle" />
+          <PolarAngleAxis dataKey="skill" tick={{ fill: '#94a3b8', fontSize: 9, fontWeight: 500 }} />
+          <Radar name={title} dataKey="score" stroke={color} fill={color} fillOpacity={0.12} strokeWidth={2} dot={{ r: 2.5, fill: color, strokeWidth: 0 }} />
+          <Tooltip content={<CustomTooltip />} />
+        </RadarChart>
+      </ResponsiveContainer>
+      <p className="mt-1 text-center text-xs font-semibold text-slate-600">{title}</p>
+    </motion.div>
+  )
 }
 
 function InterviewGraph({ technicalData, hrData, technicalCount, hrCount }) {
-    return (
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4'>
-            <RadarCard title={`Technical Interviews (${technicalCount})`}
-                data={technicalData} color="rgba(255,255,255,0.85)" index={0}
-            />
-            <RadarCard title={`HR Interviews (${hrCount})`}
-                data={hrData} color="rgba(180,180,180,0.85)" index={1}
-            />
-
-        </div>
-    )
+  return (
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+      <RadarCard title={`Technical interviews (${technicalCount})`} data={technicalData} color="#2563eb" index={0} />
+      <RadarCard title={`HR interviews (${hrCount})`} data={hrData} color="#7c3aed" index={1} />
+    </div>
+  )
 }
 
 export default InterviewGraph

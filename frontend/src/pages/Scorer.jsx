@@ -152,7 +152,7 @@ function Scorer({ user, setUser }) {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.05 }}
-                    className='relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-4 sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]'>
+                    className='surface-card p-5 flex flex-col items-center gap-4 sm:flex-row'>
                     <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none' />
 
                     <div className='relative'>
@@ -160,8 +160,8 @@ function Scorer({ user, setUser }) {
 
                     </div>
                     <div className='relative'>
-                        <p className='text-white/50 text-xs mb-0.5'>Resume Score</p>
-                        <p className='text-lg sm:text-xl font-bold mb-1.5 text-white'>
+                        <p className='text-slate-400 text-xs mb-0.5'>Resume score</p>
+                        <p className='text-lg sm:text-xl font-bold mb-1.5 text-slate-950'>
                             {resume.score >= 75 ? "Strong" : resume.score >= 50 ? "Average" : "Needs Work"}
                         </p>
                         <div className='flex items-center gap-1.5'>
@@ -181,11 +181,11 @@ function Scorer({ user, setUser }) {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.07 }}
-                        className='relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4  sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]'>
+                        className='surface-card p-5'>
                         <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none' />
                         <div className='relative flex items-center gap-1.5 mb-2.5'>
                             <FiAlertCircle className='text-green-400' size={14} />
-                            <span className='text-xs font-semibold text-white'>Strengths</span>
+                            <span className='text-xs font-semibold text-slate-900'>Strengths</span>
                         </div>
 
 
@@ -203,11 +203,11 @@ function Scorer({ user, setUser }) {
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.07 }}
-                        className='relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4  sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]'>
+                        className='surface-card p-5'>
                         <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none' />
                         <div className='relative flex items-center gap-1.5 mb-2.5'>
                             <FiAlertCircle className='text-yellow-400' size={14} />
-                            <span className='text-xs font-semibold text-white'>Weaknesses</span>
+                            <span className='text-xs font-semibold text-slate-900'>Weaknesses</span>
                         </div>
 
                         <div className='relative flex flex-wrap gap-1.5'>
@@ -226,11 +226,11 @@ function Scorer({ user, setUser }) {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.09 }}
-                    className='relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4  sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]'>
+                    className='surface-card p-5'>
                     <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none' />
                     <div className='relative flex items-center gap-1.5 mb-2.5'>
                         <FiZap className='text-red-400' size={14} />
-                        <span className='text-xs font-semibold text-white'>Missing Skills</span>
+                        <span className='text-xs font-semibold text-slate-900'>Missing Skills</span>
                     </div>
 
                     <div className='relative flex flex-wrap gap-1.5'>
@@ -246,11 +246,11 @@ function Scorer({ user, setUser }) {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.12 }}
-                    className='relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4  sm:flex-row shadow-[0_8px_32px_rgba(0,0,0,0.2)]'>
+                    className='surface-card p-5'>
                     <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none' />
                     <div className='relative flex items-center gap-1.5 mb-2.5'>
                         <FiTrendingUp className='text-purple-400' size={14} />
-                        <span className='text-xs font-semibold text-white'>Recommendations</span>
+                        <span className='text-xs font-semibold text-slate-900'>Recommendations</span>
                     </div>
 
                     <div className='relative flex flex-wrap gap-1.5'>
@@ -269,61 +269,34 @@ function Scorer({ user, setUser }) {
     )
     //upload section
     return (
-        <div className='min-h-screen bg-white text-[#0A0A0A]'>
-            <Navbar label="Resume Scorer" />
+        <div className='min-h-screen bg-[#f7f8fb] text-slate-900'>
+            <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95">
+                <div className="mx-auto flex h-[72px] max-w-[1180px] items-center justify-between px-4 sm:px-6">
+                    <button onClick={() => navigate('/dashboard')} className="flex h-10 items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-950">← <span className="hidden sm:inline">Back</span></button>
+                    <div className="text-center"><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">Career tools</p><h1 className="text-sm font-bold text-slate-950">Resume scorer</h1></div>
+                    <div className="w-10" />
+                </div>
+            </header>
 
 
-            <section className='flex min-h-screen items-center justify-center px-3 pt-18 pb-6'>
+            <section className='mx-auto flex min-h-[calc(100vh-72px)] max-w-[1180px] items-center justify-center px-4 py-10'>
 
-                <motion.div
-                    initial={{ y: 60, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.05 }}
-                    className='relative w-full max-w-sm rounded-3xl overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 p-4 shadow-[0_8px_32px_rgba(0,0,0,0.25)] sm:p-6'>
-                    <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none' />
+                <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="surface-card w-full max-w-md p-6 sm:p-8">
+                    <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600"><FiUploadCloud size={20} /></div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-violet-600">Resume analysis</p>
+                    <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">Upload your resume</h2>
+                    <p className="mt-2 text-sm leading-6 text-slate-500">Get an ATS score, strengths, gaps, and clear recommendations.</p>
 
-                    <p className='relative text-[10px] text-white/40 tracking-widest uppercase mb-1.5'>Step 1 t0 2 </p>
-
-                    <div className='relative w-full h-1 bg-white/10 rounded-full mb-4'>
-                        <div className='h-1 bg-white rounded-full w-1/2' /></div>
-
-                    <h2 className='relative text-lg font-bold mb-1 text-white'>
-                        Upload Your Resume
-                    </h2>
-                    <p className='relative text-white/45 text-xs mb-4'>
-                        We'll score it and give you actionable feedback
-                    </p>
-
-
-                    <label className={`relative flex flex-col items-center justify-center w-full h-40 sm:h-48 rounded-2xl border-2 border-dashed cursor-pointer transition-colors
-              ${file
-                            ? "border-white/40 bg-white/[0.06]"
-                            : "border-white/15 bg-white/[0.03] hover:border-white/30"
-                        }`}>
-                        <FiUploadCloud className={`text-4xl sm:text-5xl mb-2.5 ${file ? "text-white" : "text-white/30"}`} />
-                        <p className="text-xs font-medium text-white/80">
-                            {file ? file.name : "Click or drag PDF here"}
-                        </p>
-                        <p className="text-[10px] text-white/35 mt-1">PDF only · Max 20MB</p>
-
-                        <input type='file'
-                            accept='.pdf'
-                            className='hidden'
-                            onChange={(e) => setFile(e.target.files[0])}
-                        />
+                    <label className={`mt-6 flex h-48 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed transition ${file ? 'border-blue-300 bg-blue-50/50' : 'border-slate-300 bg-slate-50 hover:border-slate-400'}`}>
+                        <FiUploadCloud className={`mb-3 text-3xl ${file ? 'text-blue-600' : 'text-slate-400'}`} />
+                        <p className="max-w-[260px] truncate px-4 text-sm font-semibold text-slate-700">{file ? file.name : 'Choose a PDF resume'}</p>
+                        <p className="mt-1 text-xs text-slate-400">PDF only · Maximum 20 MB</p>
+                        <input type="file" accept=".pdf" className="hidden" onChange={(event) => setFile(event.target.files[0])} />
                     </label>
 
-                    <motion.button
-                        whileHover={{ scale: 1.07 }}
-                        whileTap={{ scale: 0.97 }}
-                        onClick={uploadResume}
-                        disabled={!file || loading} className='relative mt-4 w-full h-10 rounded-xl font-semibold text-xs bg-white text-[#0A0A0A] shadow-[0_4px_14px_rgba(255,255,255,0.15)] hover:bg-white/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all'>
-                        {loading ? "Analyzing..." : "Analyze Resume"}
-
+                    <motion.button whileTap={{ scale: 0.98 }} onClick={uploadResume} disabled={!file || loading} className="mt-5 h-11 w-full rounded-xl bg-slate-950 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-40">
+                        {loading ? 'Analyzing...' : 'Analyze resume'}
                     </motion.button>
-
-
-
                 </motion.div>
             </section>
 

@@ -1,65 +1,42 @@
 import React from 'react'
-import { motion } from "motion/react";
-import { FiCheckCircle, FiClock, FiMap, FiTarget, FiX } from 'react-icons/fi';
-import ModuleCard from './ModuleCard';
-function RoadmapResult({roadmap, onClear}) {
+import { motion } from 'motion/react'
+import { FiCheckCircle, FiClock, FiMap, FiTarget, FiX } from 'react-icons/fi'
+import ModuleCard from './ModuleCard'
+
+function RoadmapResult({ roadmap, onClear }) {
   return (
-    <motion.div 
-    initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}>
-
-        <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-         className='relative overflow-hidden bg-[#000000]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-5 mb-5 shadow-[0_8px_32px_rgba(0,0,0,0.22)]'>
-            <div className='absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent pointer-events-none'/>
-
-            <div className='relative flex items-start justify-between mb-4'>
-
-                <div>
-                    <p className='text-xs text-white/35 tracking-widest uppercase mb-1'>Your Roadmap</p>
-                    <h2 className='text-xl font-bold text-white'>{roadmap.title}</h2>
-                    <p className='text-sm text-white/45 mt-0.5'>
-                    Target: <span className="text-violet-400 font-medium">{roadmap.targetPackage}</span>
-                    </p>
-                </div>
-                <button onClick={onClear} className='text-white/30 hover:text-white/70 transition-colors mt-0.5'>
-                <FiX size={16}/></button>
-            </div>
-
-            <div className='relative grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3'>
-                {[
-            { icon: FiTarget,      label: "Difficulty", value: roadmap.level },
-            { icon: FiClock,       label: "Duration",   value: roadmap.duration },
-            { icon: FiCheckCircle, label: "Modules",    value: `${roadmap.modules.length} topics` },
-          ].map(({icon:Icon , label , value})=>(
-            <div key={label} className='rounded-xl p-3 bg-white/5 border border-white/8'>
-                <div className='flex items-center gap-1.5 mb-1'>
-                    <Icon size={11} className="text-white/30"/>
-                    <span className='text-xs text-white/30'>{label}</span>
-                    </div>
-                    <p className='text-sm font-semibold text-white'>{value}</p>
-
-            </div>
-          ))}
-            </div>
-
-        </motion.div>
-
-        <div className='mb-4'>
-            <p className='text-xs text-black/40 font-semibold uppercase tracking-widest mb-3 flex items-center gap-2'>
-            <FiMap size={12}/> Learning Modules </p>
-            <div className='flex flex-col gap-2'>
-                {
-                    roadmap.modules.map((m,i)=>(
-                        <ModuleCard key={m.title} mod={m} index={i}/>
-                    ))
-                }
-            </div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pb-10">
+      <div className="surface-card mb-5 overflow-hidden">
+        <div className="flex items-start justify-between border-b border-slate-100 px-6 py-6 sm:px-8">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-600">Your roadmap</p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">{roadmap.title}</h2>
+            <p className="mt-1 text-sm text-slate-500">Target package: <span className="font-semibold text-slate-800">{roadmap.targetPackage}</span></p>
+          </div>
+          <button onClick={onClear} className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-700" aria-label="Close roadmap"><FiX size={16} /></button>
         </div>
-      
+        <div className="grid gap-px bg-slate-100 sm:grid-cols-3">
+          {[
+            { icon: FiTarget, label: 'Level', value: roadmap.level },
+            { icon: FiClock, label: 'Duration', value: roadmap.duration },
+            { icon: FiCheckCircle, label: 'Modules', value: `${roadmap.modules?.length || 0} topics` },
+          ].map((item) => {
+            const Icon = item.icon
+            return (
+              <div key={item.label} className="bg-white px-6 py-5">
+                <div className="flex items-center gap-2 text-xs text-slate-400"><Icon size={13} /> {item.label}</div>
+                <p className="mt-2 text-sm font-bold text-slate-900">{item.value}</p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+      <div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-slate-400"><FiMap size={13} /> Learning modules</div>
+      <div className="space-y-3">
+        {(roadmap.modules || []).map((module, index) => (
+          <ModuleCard key={`${module.title}-${index}`} mod={module} index={index} />
+        ))}
+      </div>
     </motion.div>
   )
 }

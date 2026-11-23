@@ -111,7 +111,7 @@ function Step1setup({ user, setUser }) {
     }
 
     return (
-        <div className='min-h-screen bg-white flex items-center justify-center p-3 sm:p-5'>
+        <div className='min-h-screen bg-[#f7f8fb] flex items-center justify-center p-3 sm:p-5'>
             <motion.div
                 initial={{ opacity: 0, y: 25 }}
                 animate={{ opacity: 1, y: 0 }}
