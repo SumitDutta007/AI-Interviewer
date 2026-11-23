@@ -70,7 +70,9 @@ const billingServiceUrl = getServiceUrl(
     "https://billing-service-b1g1.onrender.com"
 )
 
-app.use("/api/auth" , proxy(authServiceUrl))
+app.use("/api/auth" , proxy(authServiceUrl, {
+    timeout: 300000
+}))
 app.use("/api/resume" ,isAuth, proxyWithHeaders(resumeServiceUrl))
 app.use("/api/interview",isAuth ,proxyWithHeaders(interviewServiceUrl))
 app.use("/api/roadmap",isAuth ,proxyWithHeaders(roadmapServiceUrl))

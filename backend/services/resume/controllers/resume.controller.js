@@ -29,6 +29,13 @@ export const uploadResume = async (req,res) => {
         }
 
         const resumeText = await extractText(file.path)
+        if (!resumeText?.trim()) {
+            await fs.promises.unlink(file.path)
+            return res.status(400).json({
+                success:false,
+                message:"Could not extract text from this PDF. Upload a text-based PDF."
+            })
+        }
 
         const aiResponse = await resumeAgent(resumeText)
 

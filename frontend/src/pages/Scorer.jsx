@@ -89,17 +89,6 @@ function Scorer({ user, setUser }) {
         try {
             setLoading(true)
 
-            try {
-                const coinResponse = await useCoins({ coins: 10, action: "resume-scorer" })
-                setUser((prev) => ({
-                    ...prev, interviewCoin: coinResponse?.interviewCoin,
-                }))
-            } catch (error) {
-                setLoading(false)
-                alert("Failed to use coins.")
-                return;
-            }
-
             const formData = new FormData()
             formData.append("resume", file)
 
@@ -111,6 +100,16 @@ function Scorer({ user, setUser }) {
             }
 
             dispatch(setResume(resumeData))
+
+            try {
+                const coinResponse = await useCoins({ coins: 10, action: "resume-scorer" })
+                setUser((prev) => ({
+                    ...prev, interviewCoin: coinResponse?.interviewCoin,
+                }))
+            } catch (error) {
+                console.log("Resume uploaded, but coin deduction failed:", error)
+            }
+
             setLoading(false)
         } catch (error) {
             console.log(error)

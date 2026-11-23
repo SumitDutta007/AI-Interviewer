@@ -2,7 +2,7 @@ import React from 'react'
 import { motion } from "motion/react"
 import { FiArrowLeft, FiArrowRight, FiBriefcase, FiCheck, FiCheckCircle, FiFileText, FiUploadCloud } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useCoins } from '../../apis/user.api'
 import api from '../../utils/axios'
@@ -19,46 +19,72 @@ function Step1setup({ user, setUser }) {
     const [uploading, setUploading] = useState(false)
     const [starting, setStarting] = useState(false)
 
+    useEffect(() => {
+        if (resume) {
+            setUseResume(true)
+        }
+    }, [resume])
+
     const uploadResume = async () => {
         if (!file) {
             alert("Please select a PDF")
+            return
         }
         try {
             setUploading(true)
-            try {
-                
-            const coinResponse = await useCoins({ coins: 10, action: "resume-scorer" })
-
-            setUser((prev) => ({
-                ...prev, interviewCoin: coinResponse?.interviewCoin,
-            }))
-            } catch (error) {
-                setUploading(false)
-                alert("Failed to use coins.")
-                return;
-            }
-
-
             const formData = new FormData()
             formData.append("resume", file)
 
             const response = await api.post("/api/resume/upload", formData)
 
-            dispatch(setResume(response?.data?.data))
+            const uploadedResume = response?.data?.data
+            if (!uploadedResume) {
+                throw new Error("Resume analysis did not return any data.")
+            }
+
+            dispatch(setResume(uploadedResume))
+            setUseResume(true)
+
+            try {
+                const coinResponse = await useCoins({ coins: 10, action: "resume-scorer" })
+                setUser((prev) => ({
+                    ...prev, interviewCoin: coinResponse?.interviewCoin,
+                }))
+            } catch (error) {
+                console.log("Resume uploaded, but coin deduction failed:", error)
+            }
+
             setUploading(false)
             setFile(null)
         } catch (error) {
             console.log(error)
-            alert("Upload failed")
+            try {
+                const existing = await api.get("/api/resume/get-resume")
+                if (existing?.data?.data) {
+                    dispatch(setResume(existing.data.data))
+                    setUseResume(true)
+                    setFile(null)
+                    setUploading(false)
+                    return
+                }
+            } catch (resumeError) {
+                console.log(resumeError)
+            }
+
+            alert(error.response?.data?.message || error.message || "Upload failed")
             setUploading(false)
         }
     }
 
     const start = async () => {
+        if (!role.trim()) {
+            alert("Please enter a target role.")
+            return
+        }
         setStarting(true)
         const response = await startInterview({ role, type, useResume, resume })
 
-        if(response){
+        if(response?.interviewId){
             try {
                 
             const coinResponse = await useCoins({ coins: 50, action: "start-interview" })
@@ -76,7 +102,11 @@ function Step1setup({ user, setUser }) {
         }
 
         setStarting(false)
-        navigate(`/interview/${response.interviewId}`)
+        if (response?.interviewId) {
+            navigate(`/interview/${response.interviewId}`)
+        } else {
+            alert(response?.message || "Failed to start interview.")
+        }
 
     }
 
