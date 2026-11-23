@@ -123,11 +123,7 @@ function Scorer({ user, setUser }) {
                 console.log(resumeError)
             }
 
-            const message = error.response?.status === 502
-                ? "The resume service was unavailable. Wait a few seconds and try again."
-                : error.response?.status === 504
-                    ? "Resume processing timed out. Try again with a smaller PDF."
-                    : error.response?.data?.message || error.message || "Upload failed"
+            const message = error.response?.data?.message || error.message || "Upload failed"
             alert(message)
             setLoading(false)
         }
