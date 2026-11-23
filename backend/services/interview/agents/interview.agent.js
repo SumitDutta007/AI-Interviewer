@@ -37,16 +37,6 @@ export const interviewAgent = async (data) => {
     } catch (error) {
         console.log("Interview Agent Parse Error");
         console.log(error);
-
-        const role = data.role || "this role"
-        return [
-            { question: `Tell us about your experience relevant to ${role}.`, difficulty: "easy", timer: 90 },
-            { question: "What are your strongest skills and how have you used them?", difficulty: "easy", timer: 90 },
-            { question: `Explain a difficult problem you solved in ${role} work.`, difficulty: "medium", timer: 120 },
-            { question: "How do you approach learning a new tool or technology?", difficulty: "medium", timer: 120 },
-            { question: `Walk through a real-world ${role} scenario and your solution.`, difficulty: "hard", timer: 180 },
-            { question: "What would you improve in your most recent project?", difficulty: "hard", timer: 180 },
-        ]
-        
+        throw new Error("Failed to generate interview questions.")
     }
 }

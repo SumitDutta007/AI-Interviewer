@@ -80,26 +80,7 @@ ${JSON.stringify(resume, null, 2)}
     } catch (error) {
         console.log("Roadmap Agent Error");
         console.log(error);
-
-        return {
-            ...state,
-            roadmap: {
-                title: `${state.role} Learning Roadmap`,
-                targetPackage: state.targetPackage,
-                duration: "12-16 weeks",
-                level: "Intermediate",
-                modules: [
-                    { title: "Programming Fundamentals", duration: "1 week", difficulty: "Easy", description: "Review core language syntax, data structures, debugging, and testing." },
-                    { title: "Core Tools and Environment", duration: "1 week", difficulty: "Easy", description: "Set up Git, package managers, terminal workflows, and project tooling." },
-                    { title: "Role Foundations", duration: "2 weeks", difficulty: "Medium", description: `Learn the foundational technologies required for a ${state.role}.` },
-                    { title: "Applied Projects", duration: "3 weeks", difficulty: "Medium", description: "Build portfolio projects that demonstrate practical role-specific skills." },
-                    { title: "Advanced Concepts", duration: "2 weeks", difficulty: "Hard", description: "Study scalable architecture, performance, security, and reliability." },
-                    { title: "Interview Preparation", duration: "2 weeks", difficulty: "Hard", description: "Practice role-specific interviews, system design, and behavioral scenarios." },
-                    { title: "Testing and Quality", duration: "1 week", difficulty: "Medium", description: "Learn testing strategies, code review, debugging, and quality assurance." },
-                    { title: "Career Portfolio", duration: "1 week", difficulty: "Easy", description: "Package projects, documentation, and achievements for job applications." },
-                ]
-            }
-        }
+        throw error
     }
 }
 

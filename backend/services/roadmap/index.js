@@ -11,8 +11,11 @@ const PORT = process.env.PORT || 6004
 
 app.use("/",roadmapRouter)
 
-app.listen(PORT , ()=>{
-    console.log(`Roadmap-service Started on ${PORT}`)
-    connectDB()
-    
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Roadmap-service Started on ${PORT}`)
+    })
+}).catch(() => {
+    console.error("Roadmap service cannot start without MongoDB")
+    process.exit(1)
 })

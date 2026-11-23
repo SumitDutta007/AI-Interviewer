@@ -2,14 +2,12 @@ import mongoose from "mongoose";
 
 export const connectDB=async () => {
     try {
-        const mongodbUrl = process.env.MONGODB_URL?.replace(
-            /(mongodb(?:\+srv)?:\/\/[^/?]+)\/[^?]*(\?.*)?$/,
-            "$1/roadmap$2"
-        )
-        await mongoose.connect(mongodbUrl)
+        await mongoose.connect(process.env.MONGODB_URL)
         console.log("Connected DB")
+        return true
     } catch (error) {
         console.log("MongoDb error",error)
+        throw error
     }
     
 }
