@@ -81,10 +81,50 @@ app.use("/api/roadmap",isAuth, nativeServiceProxy(roadmapServiceUrl))
 app.use("/api/billing",isAuth, nativeServiceProxy(billingServiceUrl))
 app.get("/api/me",isAuth,getCurrentUser)
 
+const warmUpUpstream = (url, label) => {
+  return new Promise((resolve) => {
+    let attempts = 0
 
+    const probe = () => {
+      attempts++
+      try {
+        const target = new URL("/", url)
+        const transport = target.protocol === "https:" ? https : http
+        const request = transport.get(target, { timeout: 60000 }, (response) => {
+          response.resume()
+          console.log(`${label} upstream ready (${response.statusCode})`)
+          resolve()
+        })
+        request.on("error", (error) => {
+          if (attempts < 4) {
+            console.log(`${label} upstream warming, retry ${attempts}`)
+            setTimeout(probe, 20000)
+          } else {
+            console.log(`${label} upstream unavailable: ${error.message}`)
+            resolve()
+          }
+        })
+      } catch (error) {
+        console.log(`${label} upstream warm-up failed: ${error.message}`)
+        resolve()
+      }
+    }
 
+    probe()
+  })
+}
 
+const startGateway = async () => {
+  await Promise.all([
+    warmUpUpstream(resumeServiceUrl, "Resume"),
+    warmUpUpstream(interviewServiceUrl, "Interview"),
+    warmUpUpstream(roadmapServiceUrl, "Roadmap"),
+    warmUpUpstream(billingServiceUrl, "Billing"),
+  ])
 
-app.listen(PORT , ()=>{
+  app.listen(PORT, () => {
     console.log(`Gateway Started on ${PORT}`)
-})
+  })
+}
+
+startGateway()

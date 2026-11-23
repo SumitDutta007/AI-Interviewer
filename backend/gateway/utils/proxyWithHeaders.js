@@ -52,9 +52,9 @@ export const nativeServiceProxy = (serviceUrl, fixedPath) => {
           headers,
           timeout: 300000,
         }, (upstreamResponse) => {
-          if (attempt === 0 && [502, 503, 504].includes(upstreamResponse.statusCode)) {
+          if (attempt < 3 && [502, 503, 504].includes(upstreamResponse.statusCode)) {
             upstreamResponse.resume()
-            setTimeout(() => send(1), 3000)
+            setTimeout(() => send(attempt + 1), 20000)
             return
           }
 
@@ -75,11 +75,11 @@ export const nativeServiceProxy = (serviceUrl, fixedPath) => {
 
         upstream.on("error", (error) => {
           const retriableError =
-            attempt === 0 &&
+            attempt < 3 &&
             ["ECONNRESET", "ECONNREFUSED", "ETIMEDOUT", "ENOTFOUND"].includes(error.code)
 
           if (retriableError) {
-            setTimeout(() => send(1), 3000)
+            setTimeout(() => send(attempt + 1), 20000)
             return
           }
 
